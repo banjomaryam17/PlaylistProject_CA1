@@ -1,4 +1,4 @@
 package persistence;
 
-public class GenreDao {
+public interface GenreDao {
 }

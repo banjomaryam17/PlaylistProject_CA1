@@ -1,4 +1,6 @@
 package persistence;
 
-public class GenreDaoImpl {
+import entities.Genre;
+
+public class GenreDaoImpl implements Genre {
 }
