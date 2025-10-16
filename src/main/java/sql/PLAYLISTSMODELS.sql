@@ -5,12 +5,12 @@ USE PLAYLISTMODELS;
 -- Users table (dummy)
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
-                       userID INT(11) NOT NULL AUTO_INCREMENT,
-                       username VARCHAR(50) NOT NULL,
-                       email VARCHAR(100) NOT NULL,
-                       password VARCHAR(255) NOT NULL,
-                       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-                       PRIMARY KEY (userID)
+           userID INT(11) NOT NULL AUTO_INCREMENT,
+           username VARCHAR(50) NOT NULL,
+           email VARCHAR(100) NOT NULL,
+           password VARCHAR(255) NOT NULL,
+           createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+           PRIMARY KEY (userID)
 );
 
 -- Songs table (dummy)
@@ -37,12 +37,12 @@ CREATE TABLE genres (
 -- Playlists table (FK removed temporarily)
 DROP TABLE IF EXISTS playlists;
 CREATE TABLE playlists (
-               playlistID INT(11) NOT NULL AUTO_INCREMENT,
-               userID INT(11) NOT NULL,
-               playlistName VARCHAR(50) NOT NULL,
-               description VARCHAR(255) DEFAULT NULL,
-               createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-               PRIMARY KEY (playlistID)
+       playlistID INT(11) NOT NULL AUTO_INCREMENT,
+       userID INT(11) NOT NULL,
+       playlistName VARCHAR(50) NOT NULL,
+       description VARCHAR(255) DEFAULT NULL,
+       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+       PRIMARY KEY (playlistID)
 );
 
 -- Playlist_Songs table (FKs removed temporarily)
