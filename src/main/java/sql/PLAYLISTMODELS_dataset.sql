@@ -53,3 +53,18 @@ INSERT INTO playlist_songs (playlistID, songID, addedAt) VALUES
  (8,2,NOW()),(8,9,NOW()),(8,10,NOW()),(8,11,NOW()),(8,14,NOW()),
  (9,15,NOW()),(9,16,NOW()),(9,1,NOW()),(9,4,NOW()),(9,7,NOW()),
  (10,8,NOW()),(10,9,NOW()),(10,10,NOW()),(10,12,NOW()),(10,19,NOW());
+
+
+INSERT INTO `users` (`username`, `email`, `password`, `userType`)
+VALUES (' juilt ', 'Amena@gmail.com', ' shen', 1),
+       (' Zahidi', 'Zahidi@gmail.com', 'Dior', 1),
+       (' Shoun', 'shoun@gmail.com', 'Dior', 1),
+       ('Zain', 'Zain@gmail.com', 'dummy', 2);
+
+
+INSERT INTO `artist` (`artistID`, `artistName`, `genre`, `hometown`, `dateOfBirth`)
+VALUES (1, 'Taylor Swift', 'Pop', 'Nashville Tennessee', '1989-12-13'),
+       (2, 'Drake', 'Rap', 'Toronto Canada', '1986-10-24'),
+       (3, 'Billie Eilish', 'Alternative', 'Los Angeles California', '2001-12-18'),
+       (4, 'The Weeknd', 'R&B', 'Toronto Canada', '1990-02-16'),
+       (5, 'Bad Bunny', 'Reggaeton', 'San Juan Puerto Rico', '1994-03-10');

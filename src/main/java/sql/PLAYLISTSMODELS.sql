@@ -2,15 +2,15 @@ DROP DATABASE IF EXISTS PLAYLISTMODELS;
 CREATE DATABASE IF NOT EXISTS PLAYLISTMODELS;
 USE PLAYLISTMODELS;
 
--- Users table (dummy)
+-- Users table
 DROP TABLE IF EXISTS users;
-CREATE TABLE users (
-           userID INT(11) NOT NULL AUTO_INCREMENT,
-           username VARCHAR(50) NOT NULL,
-           email VARCHAR(100) NOT NULL,
-           password VARCHAR(255) NOT NULL,
-           createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-           PRIMARY KEY (userID)
+CREATE TABLE users
+(
+    username varchar(50)         NOT NULL,
+    email    varchar(255) UNIQUE NOT NULL,
+    password varchar(255)        NOT NULL,
+    userType int(1) NOT NULL DEFAULT 1 COMMENT '1 for general user, 2 for admin ',
+    PRIMARY KEY (username)
 );
 
 -- Songs table (dummy)
@@ -23,6 +23,17 @@ CREATE TABLE songs (
        genreID INT(11) DEFAULT NULL,
        duration INT(11) DEFAULT NULL, -- in seconds
        PRIMARY KEY (songID)
+);
+
+---- Artist table
+CREATE TABLE artist
+(
+    artistID    int(255)    NOT NULL,
+    artistName  varchar(50) NOT NULL,
+    genre       varchar(50) NOT NULL,
+    hometown    varchar(50) NOT NULL,
+    dateOfBirth  DATE,
+    PRIMARY KEY (artistID)
 );
 
 -- Genres table
