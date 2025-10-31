@@ -8,7 +8,6 @@ public class Artist {
      private int artistId;
      private String artistName;
      private String  genre;
-     private String hometown;
      private Date dateOfBirth;
 
 
@@ -19,11 +18,12 @@ public class Artist {
         this.artistId = artistId;
         this.artistName = artistName;
         this.genre = genre;
-        this.hometown = hometown;
         this.dateOfBirth = dateOfBirth;
     }
 
-
+    public static Object builder() {
+        return new Artist();
+    }
 
 
     public String getArtistName() {
@@ -40,9 +40,7 @@ public class Artist {
         return genre;
     }
 
-    public String getHometown() {
-        return hometown;
-    }
+
 
     public Date getDateOfBirth() {
         return dateOfBirth;
@@ -61,9 +59,6 @@ public class Artist {
         this.genre = genre;
     }
 
-    public void setHometown(String hometown) {
-        this.hometown = hometown;
-    }
 
     public void setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
@@ -75,9 +70,11 @@ public class Artist {
                 "artistId=" + artistId +
                 ", artistName='" + artistName + '\'' +
                 ", genre='" + genre + '\'' +
-                ", hometown='" + hometown + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
                 '}';
+    }
+
+    public void setName(String name) {
     }
 }
 
