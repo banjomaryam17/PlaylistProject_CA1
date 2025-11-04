@@ -18,7 +18,6 @@ public class Playlists {
     private Date createdAt;
 
     public Playlists(){
-
     }
 
     public Playlists(int playlistID, int userID, String playlistName, String description, Date createdAt){
