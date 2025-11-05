@@ -27,6 +27,7 @@ public class Playlists {
         this.description = description;
         this.createdAt = createdAt;
     }
+//    GETTERS
     public int getPlaylistID(){
         return playlistID;
     }
@@ -36,16 +37,14 @@ public class Playlists {
     public String getPlaylistName(){
         return playlistName;
     }
-
-    public String getDescription(String description){
+    public String getDescription(){
         return description;
     }
-    public Date getCreatedAt(Date createdAt) {
-        return createdAt;
-    }
+    public Date getCreatedAt() { return createdAt; }
     public void setPlaylistID(int playlistID){
         this.playlistID = playlistID;
     }
+//    SETTERS
     public void setUserID(int userID){
         this.userID= userID;
     }
@@ -55,7 +54,6 @@ public class Playlists {
     public void setDescription(String description){
       this.description=description;
     }
-
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
