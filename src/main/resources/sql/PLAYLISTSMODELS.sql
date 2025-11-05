@@ -2,25 +2,16 @@ DROP DATABASE IF EXISTS PLAYLISTMODELS;
 CREATE DATABASE IF NOT EXISTS PLAYLISTMODELS;
 USE PLAYLISTMODELS;
 
--- Users table
-DROP TABLE IF EXISTS users;
-CREATE TABLE User (
-user_id INT PRIMARY KEY AUTO_INCREMENT,
-username VARCHAR(50) UNIQUE NOT NULL,
-password_hash VARCHAR(255) NOT NULL, Store BCrypt/SHA-256 hashed passwords!!!
-    email VARCHAR(100) UNIQUE NOT NULL,
-first_name VARCHAR(50) NOT NULL,
-last_name VARCHAR(50) NOT NULL,
-registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-last_login TIMESTAMP NULL,
-is_active BOOLEAN DEFAULT TRUE,
-
-    -- Indexes for performance
-                        INDEX idx_username (username),
-                        INDEX idx_email (email),
-                        INDEX idx_is_active (is_active)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
+--- user
+DROP TABLE IF EXISTS playlists;
+CREATE TABLE users
+(
+    username varchar(55)         NOT NULL,
+    email    varchar(255) UNIQUE NOT NULL,
+    password varchar(255)        NOT NULL,
+    userType int(1) NOT NULL DEFAULT 1 COMMENT '1 for user, 2 for admin ',
+    PRIMARY KEY (username)
+);
 
 -- Songs table (dummy)
 DROP TABLE IF EXISTS songs;
@@ -47,6 +38,15 @@ INDEX idx_artist_name (artist_name),
 INDEX idx_country (country)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS playlists;
+CREATE TABLE artist
+(
+    artistID    int(255)    NOT NULL,
+    artistName  varchar(55) NOT NULL,
+    genre       varchar(55) NOT NULL,
+    dateOfBirth DATE,
+    PRIMARY KEY (artistID)
+);
 
 
 -- Genres table

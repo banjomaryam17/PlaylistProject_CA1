@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+    <!-- Define properties for use in the configuration -->
+    <property name="LOG_PATTERN"
+              value="%blue(%d{yyyy-MM-dd HH:mm:ss}) %boldRed(%-5level) %logger{36} - %msg%n%ex{short}%n"/>
+    <property name="LOG_DIR" value="logs"/>
+    <property name="LOG_FILE" value="application.log"/>
+
+
+
+    <!--  A Console Appender for logging to the console -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+    <!-- Root Logger configurations -->
+    <root level="info">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="File"/>
+    </root>
+
+    <!--  a Package specific Logger configurations -->
+    <logger name="web-patterns" level="debug" additivity="false">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="File"/>
+    </logger>
+    </configuration>

@@ -15,12 +15,20 @@
         <kotlin.version>2.2.0</kotlin.version>
     </properties>
   <dependencies>
+
       <dependency>
           <groupId>org.projectlombok</groupId>
           <artifactId>lombok</artifactId>
           <version>1.18.30</version>
           <scope>provided</scope>
       </dependency>
+      <dependency>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
+          <version>1.5.19</version>
+          <scope>compile</scope>
+      </dependency>
+
       <dependency>
           <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk8</artifactId>
@@ -32,8 +40,8 @@
           <version>${kotlin.version}</version>
           <scope>test</scope>
       </dependency>
-  </dependencies>
 
+  </dependencies>
     <build>
         <plugins>
             <plugin>

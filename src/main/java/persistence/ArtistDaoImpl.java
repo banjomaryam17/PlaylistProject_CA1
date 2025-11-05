@@ -1,118 +1,142 @@
 package persistence;
 
 import entities.Artist;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-public class ArtistDaoImpl extends MySQLDao implements ArtistDao {
+/**
+ * Each call loads the MySQL driver, opens a short lived connection  runs a
+ *  * prepared statement, and converts rows into {@link Artist} objects.
+ *  * Keep the DB settings below in sync with  the  local MySQL install.
+ */
+public class ArtistDaoImpl implements ArtistDao {
+
+    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
+    private static final String URL    = "jdbc:mysql://127.0.0.1:3306/PLAYLISTSMODELS";
+    private static final String USER   = "root";
+    private static final String PASS   = "root";
 
     /**
-     * Ges  the connection from the superclass by passing , database name
-     * @param dbName  the name of the database
+     * Maps one result-set row to an
+     * Expected columns: artistID, artistName, genre, dateOfBirth.
      */
-    public ArtistDaoImpl(String dbName) {
-        super(dbName);
-    }
-    /** Get one artist by id, or null if not found */
-
-    @Override
-    public Artist getArtistById(int id) {
-        Artist artist = null;
-        final String query = "SELECT * FROM Artists WHERE artistID = ?";
-
-        try (Connection con = super.getConnection();
-             PreparedStatement ps = con.prepareStatement(query)) {
-
-            ps.setInt(1, id);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    artist = mapRowBasic(rs);
-                }
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Exception occurred in getArtistById(): " + e.getMessage());
-        }
-        return artist;
-    }
-    /** Get one artist by exact name match, or null if not fond */
-
-    @Override
-    public Artist getArtistByName(String name) {
-        Artist artist = null;
-        final String query = "SELECT * FROM Artists WHERE name = ?";
-
-        try (Connection con = super.getConnection();
-             PreparedStatement ps = con.prepareStatement(query)) {
-
-            ps.setString(1, name);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    artist = mapRowBasic(rs);
-                }
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Exception occurred in getArtistByName(): " + e.getMessage());
-        }
-        return artist;
-    }
-    /** Find artists where name contains the text */
-
-    @Override
-    public List<Artist> getAllArtistsWhereNameLike(String artistName) {
-        List<Artist> result = new ArrayList<>();
-        final String query = "SELECT * FROM Artists WHERE name LIKE ? ORDER BY artistID";
-
-        try (Connection con = super.getConnection();
-             PreparedStatement ps = con.prepareStatement(query)) {
-
-            ps.setString(1, "%" + artistName + "%");
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    result.add(mapRowBasic(rs));
-                }
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Exception occurred in getAllArtistsWhereNameLike(): " + e.getMessage());
-        }
-        return result;
-    }
-    /** Return all artists */
-
-    @Override
-    public List<Artist> getAllArtists() {
-        List<Artist> result = new ArrayList<>();
-        final String query = "SELECT * FROM Artists ORDER BY artistID";
-
-        try (Connection con = super.getConnection();
-             PreparedStatement ps = con.prepareStatement(query);
-             ResultSet rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-                result.add(mapRowBasic(rs));
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Exception occurred in getAllArtists(): " + e.getMessage());
-        }
-        return result;
-    }
-    /** Map current row to Artist */
-
-    private Artist mapRowBasic(ResultSet rs) throws SQLException {
+    private Artist mapRow(ResultSet rs) throws SQLException {
         Artist a = new Artist();
         a.setArtistId(rs.getInt("artistID"));
-        a.setName(rs.getString("name"));
+        a.setArtistName(rs.getString("artistName"));
+        a.setGenre(rs.getString("genre"));
+
+        Date dob = null;
+        java.sql.Date sqlDob = rs.getDate("dateOfBirth");
+        if (sqlDob != null) dob = new Date(sqlDob.getTime());
+        a.setDateOfBirth(dob);
+
         return a;
+    }
+
+    /**
+     * Find one artist by primary key.
+     * Returns {@code null} if no match.
+     */
+    @Override
+    public Artist getArtistById(int id) {
+        final String sql = "SELECT * FROM Artists WHERE artistID = ?";
+        Artist artist = null;
+
+        try {
+            Class.forName(DRIVER);
+            try (Connection con = DriverManager.getConnection(URL, USER, PASS);
+                 PreparedStatement ps = con.prepareStatement(sql)) {
+
+                ps.setInt(1, id);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) artist = mapRow(rs);
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.println("getArtistById error: " + e.getMessage());
+        }
+
+        return artist;
+    }
+
+    /**
+     * Find one artist by exact name.
+     * Returns {@code null} if no match.
+     */
+    @Override
+    public Artist getArtistByName(String name) {
+        final String sql = "SELECT * FROM Artists WHERE artistName = ?";
+        Artist artist = null;
+
+        try {
+            Class.forName(DRIVER);
+            try (Connection con = DriverManager.getConnection(URL, USER, PASS);
+                 PreparedStatement ps = con.prepareStatement(sql)) {
+
+                ps.setString(1, name);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) artist = mapRow(rs);
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.println("getArtistByName error: " + e.getMessage());
+        }
+
+        return artist;
+    }
+
+    /**
+     * Find artists whose name contains the given text
+     * Collation depends on DB/table settings.
+     */
+    @Override
+    public List<Artist> getAllArtistsWhereNameLike(String namePart) {
+        final String sql = "SELECT * FROM Artists WHERE artistName LIKE ? ORDER BY artistID";
+        List<Artist> list = new ArrayList<>();
+
+        try {
+            Class.forName(DRIVER);
+            try (Connection con = DriverManager.getConnection(URL, USER, PASS);
+                 PreparedStatement ps = con.prepareStatement(sql)) {
+
+                ps.setString(1, "%" + namePart + "%");
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) list.add(mapRow(rs));
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.println("getAllArtistsWhereNameLike error: " + e.getMessage());
+        }
+
+        return list;
+    }
+
+    /**
+     * Fetch all artists ordered by {@code artistID}.
+     */
+    @Override
+    public List<Artist> getAllArtists() {
+        final String sql = "SELECT * FROM Artists ORDER BY artistID";
+        List<Artist> list = new ArrayList<>();
+
+        try {
+            Class.forName(DRIVER);
+            try (Connection con = DriverManager.getConnection(URL, USER, PASS);
+                 PreparedStatement ps = con.prepareStatement(sql);
+                 ResultSet rs = ps.executeQuery()) {
+
+                while (rs.next()) list.add(mapRow(rs));
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.println("getAllArtists error: " + e.getMessage());
+        }
+
+        return list;
     }
 }
