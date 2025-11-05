@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS users;
 CREATE TABLE User (
 user_id INT PRIMARY KEY AUTO_INCREMENT,
 username VARCHAR(50) UNIQUE NOT NULL,
-password_hash VARCHAR(255) NOT NULL,  Store BCrypt/SHA-256 hashed passwords!!!
+password_hash VARCHAR(255) NOT NULL, Store BCrypt/SHA-256 hashed passwords!!!
     email VARCHAR(100) UNIQUE NOT NULL,
 first_name VARCHAR(50) NOT NULL,
 last_name VARCHAR(50) NOT NULL,
