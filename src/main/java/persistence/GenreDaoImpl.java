@@ -1,73 +1,68 @@
 package persistence;
 
 import entities.Genre;
+import lombok.extern.slf4j.Slf4j;
+
 import java.sql.*;
 import java.util.ArrayList;
 import  java.util.List;
 
 
 
+
 /**
  * Implementation of GenreDAO interface using JDBC.
  * Handles all database operations for Genre entity.
+ * Uses Connector for database connection management.
  *
  *
  */
-public class GenreDaoImpl implements GenreDao {
+@Slf4j
+public class GenreDaoImpl implements GenreDao{
+    private Connector connector;
+
+    public GenreDaoImpl(Connector connector) {
+        this.connector = connector;
+    }
+
+    public void closeConnection() {
+        connector.freeConnection();
+    }
 
     @Override
     public Genre create(Genre genre) throws SQLException {
-        // Create variables to hold database details
-        String driver = "com.mysql.cj.jdbc.Driver";
-        String url = "jdbc:mysql://127.0.0.1:3306/PLAYLISTSMODELS";
-        String username = "root";
-        String password = "root";
+        Connection conn = connector.getConnection();
+        if (conn == null) {
+            throw new SQLException("create(): Could not establish connection to database.");
+        }
 
-        try {
-            // Load the database driver
-            Class.forName(driver);
-            // TRY to get a connection to the database
-            try (Connection conn = DriverManager.getConnection(url, username, password)) {
-                try (PreparedStatement ps = conn.prepareStatement(
-                        "INSERT INTO genres (genreName, description) VALUES (?, ?)",
-                        Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = conn.prepareStatement(
+                "INSERT INTO genres (genreName, description) VALUES (?, ?)",
+                Statement.RETURN_GENERATED_KEYS)) {
 
-                    // Fill in the blanks, i.e. parameterize the query
-                    ps.setString(1, genre.getGenreName());
-                    ps.setString(2, genre.getDescription());
+            ps.setString(1, genre.getGenreName());
+            ps.setString(2, genre.getDescription());
 
-                    // Execute the operation
-                    int rowsAffected = ps.executeUpdate();
+            int rowsAffected = ps.executeUpdate();
 
-                    if (rowsAffected == 0) {
-                        throw new SQLException("Creating genre failed, no rows affected.");
-                    }
+            if (rowsAffected == 0) {
+                throw new SQLException("Creating genre failed, no rows affected.");
+            }
 
-                    // Get the generated key (ID)
-                    try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
-                        if (generatedKeys.next()) {
-                            genre.setGenreID(generatedKeys.getInt(1));
-                        } else {
-                            throw new SQLException("Creating genre failed, no ID obtained.");
-                        }
-                    } catch (SQLException e) {
-                        System.out.println("SQL Exception occurred when getting generated keys.");
-                        System.out.println("Error: " + e.getMessage());
-                    }
-
-                } catch (SQLException e) {
-                    System.out.println("SQL Exception occurred when attempting to prepare/execute SQL.");
-                    System.out.println("Error: " + e.getMessage());
-                    throw e;
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    genre.setGenreID(generatedKeys.getInt(1));
+                } else {
+                    throw new SQLException("Creating genre failed, no ID obtained.");
                 }
             } catch (SQLException e) {
-                System.out.println("SQL Exception occurred when attempting to connect to database.");
-                System.out.println(e.getMessage());
+                System.err.println("create(): An issue occurred when getting generated keys. Exception: " + e.getMessage());
                 throw e;
             }
-        } catch (ClassNotFoundException e) {
-            System.out.println("ClassNotFoundException occurred when trying to load driver: " + e.getMessage());
-            throw new SQLException("Database driver not found", e);
+
+        } catch (SQLException e) {
+            System.err.println("create() - The SQL query could not be prepared. Exception: " + e.getMessage());
+            throw e;
         }
 
         return genre;
@@ -75,46 +70,26 @@ public class GenreDaoImpl implements GenreDao {
 
     @Override
     public Genre findById(int genreID) throws SQLException {
+        Connection conn = connector.getConnection();
+        if (conn == null) {
+            throw new SQLException("findById(): Could not establish connection to database.");
+        }
+
         Genre genre = null;
+        try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM genres WHERE genreID = ?")) {
+            ps.setInt(1, genreID);
 
-        // Create variables to hold database details
-        String driver = "com.mysql.cj.jdbc.Driver";
-        String url = "jdbc:mysql://127.0.0.1:3306/PLAYLISTSMODELS";
-        String username = "root";
-        String password = "root";
-
-        try {
-            Class.forName(driver);
-            try (Connection conn = DriverManager.getConnection(url, username, password)) {
-                try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM genres WHERE genreID = ?")) {
-                    // Fill in the blanks, i.e. parameterize the query
-                    ps.setInt(1, genreID);
-
-                    // TRY to execute the query
-                    try (ResultSet rs = ps.executeQuery()) {
-                        // Extract the information from the result set
-                        if (rs.next()) {
-                            // Get the pieces of a genre from the resultset and create a new Genre using Builder
-                            genre = Genre.builder()
-                                    .genreID(rs.getInt("genreID"))
-                                    .genreName(rs.getString("genreName"))
-                                    .description(rs.getString("description"))
-                                    .build();
-                        }
-                    } catch (SQLException e) {
-                        System.out.println("SQL Exception occurred when executing SQL or processing results.");
-                        System.out.println("Error: " + e.getMessage());
-                    }
-                } catch (SQLException e) {
-                    System.out.println("SQL Exception occurred when attempting to prepare SQL for execution");
-                    System.out.println("Error: " + e.getMessage());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    genre = mapGenreRow(rs);
                 }
             } catch (SQLException e) {
-                System.out.println("SQL Exception occurred when attempting to connect to database.");
-                System.out.println(e.getMessage());
+                System.err.println("findById(): An issue occurred when running the query or processing the resultset. Exception: " + e.getMessage());
+                throw e;
             }
-        } catch (ClassNotFoundException e) {
-            System.out.println("ClassNotFoundException occurred when trying to load driver: " + e.getMessage());
+        } catch (SQLException e) {
+            System.err.println("findById() - The SQL query could not be prepared. Exception: " + e.getMessage());
+            throw e;
         }
 
         return genre;
@@ -122,89 +97,50 @@ public class GenreDaoImpl implements GenreDao {
 
     @Override
     public List<Genre> findAll() throws SQLException {
-        // Create variable to hold the genre info from the database
-        List<Genre> genres = new ArrayList<>();
+        Connection conn = connector.getConnection();
+        if (conn == null) {
+            throw new SQLException("findAll(): Could not establish connection to database.");
+        }
 
-        // Create variables to hold database details
-        String driver = "com.mysql.cj.jdbc.Driver";
-        String url = "jdbc:mysql://127.0.0.1:3306/PLAYLISTSMODELS";
-        String username = "root";
-        String password = "root";
-
-        try {
-            // Load the database driver
-            Class.forName(driver);
-            // TRY to get a connection to the database
-            try (Connection conn = DriverManager.getConnection(url, username, password)) {
-                // Get a statement from the connection
-                try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM genres ORDER BY genreName")) {
-                    // Execute the query
-                    try (ResultSet rs = ps.executeQuery()) {
-                        // Loop through the result set
-                        while (rs.next()) {
-                            // Get the pieces of a genre from the resultset and create a new Genre
-                            Genre g = Genre.builder()
-                                    .genreID(rs.getInt("genreID"))
-                                    .genreName(rs.getString("genreName"))
-                                    .description(rs.getString("description"))
-                                    .build();
-
-                            genres.add(g);
-                        }
-                    } catch (SQLException e) {
-                        System.out.println("SQL Exception occurred when executing SQL or processing results.");
-                        System.out.println("Error: " + e.getMessage());
-                    }
-                } catch (SQLException e) {
-                    System.out.println("SQL Exception occurred when attempting to prepare SQL for execution");
-                    System.out.println("Error: " + e.getMessage());
+        ArrayList<Genre> genres = new ArrayList<>();
+        try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM genres ORDER BY genreName")) {
+            try (ResultSet rs = ps.executeQuery()) {
+                // Loop through the result set
+                while (rs.next()) {
+                    Genre genre = mapGenreRow(rs);
+                    genres.add(genre);
                 }
             } catch (SQLException e) {
-                System.out.println("SQL Exception occurred when attempting to connect to database.");
-                System.out.println(e.getMessage());
+                System.err.println("findAll(): An issue occurred when running the query or processing the resultset. Exception: " + e.getMessage());
+                throw e;
             }
-        } catch (ClassNotFoundException e) {
-            System.out.println("ClassNotFoundException occurred when trying to load driver: " + e.getMessage());
+        } catch (SQLException e) {
+            System.err.println("findAll() - The SQL query could not be prepared. Exception: " + e.getMessage());
+            throw e;
         }
         return genres;
     }
 
     @Override
     public boolean update(Genre genre) throws SQLException {
+        Connection conn = connector.getConnection();
+        if (conn == null) {
+            throw new SQLException("update(): Could not establish connection to database.");
+        }
+
         int rowsAffected = 0;
+        try (PreparedStatement ps = conn.prepareStatement(
+                "UPDATE genres SET genreName = ?, description = ? WHERE genreID = ?")) {
 
-        // Create variables to hold database details
-        String driver = "com.mysql.cj.jdbc.Driver";
-        String url = "jdbc:mysql://127.0.0.1:3306/PLAYLISTSMODELS";
-        String username = "root";
-        String password = "root";
+            ps.setString(1, genre.getGenreName());
+            ps.setString(2, genre.getDescription());
+            ps.setInt(3, genre.getGenreID());
 
-        try {
-            // Load the database driver
-            Class.forName(driver);
-            // TRY to get a connection to the database
-            try (Connection conn = DriverManager.getConnection(url, username, password)) {
-                try (PreparedStatement ps = conn.prepareStatement(
-                        "UPDATE genres SET genreName = ?, description = ? WHERE genreID = ?")) {
-                    // Fill in the blanks, i.e. parameterize the query
-                    ps.setString(1, genre.getGenreName());
-                    ps.setString(2, genre.getDescription());
-                    ps.setInt(3, genre.getGenreID());
+            rowsAffected = ps.executeUpdate();
 
-                    // Execute the operation
-                    // Remember that when you are doing an update, a delete or an insert,
-                    // your only result will be a number indicating how many rows were affected
-                    rowsAffected = ps.executeUpdate();
-                } catch (SQLException e) {
-                    System.out.println("SQL Exception occurred when attempting to prepare/execute SQL.");
-                    System.out.println("Error: " + e.getMessage());
-                }
-            } catch (SQLException e) {
-                System.out.println("SQL Exception occurred when attempting to connect to database.");
-                System.out.println(e.getMessage());
-            }
-        } catch (ClassNotFoundException e) {
-            System.out.println("ClassNotFoundException occurred when trying to load driver: " + e.getMessage());
+        } catch (SQLException e) {
+            System.err.println("update() - The SQL query could not be prepared. Exception: " + e.getMessage());
+            throw e;
         }
 
         return rowsAffected > 0;
@@ -212,39 +148,36 @@ public class GenreDaoImpl implements GenreDao {
 
     @Override
     public boolean delete(int genreID) throws SQLException {
-        int rowsAffected = 0;
-
-        // Create variables to hold database details
-        String driver = "com.mysql.cj.jdbc.Driver";
-        String url = "jdbc:mysql://127.0.0.1:3306/PLAYLISTSMODELS";
-        String username = "root";
-        String password = "root";
-
-        try {
-            // Load the database driver
-            Class.forName(driver);
-            // TRY to get a connection to the database
-            try (Connection conn = DriverManager.getConnection(url, username, password)) {
-                try (PreparedStatement ps = conn.prepareStatement("DELETE FROM genres WHERE genreID = ?")) {
-                    // Fill in the blanks, i.e. parameterize the query
-                    ps.setInt(1, genreID);
-
-                    // Execute the operation
-                    // Remember that when you are doing an update, a deleted or an insert,
-                    // your only result will be a number indicating how many rows were affected
-                    rowsAffected = ps.executeUpdate();
-                } catch (SQLException e) {
-                    System.out.println("SQL Exception occurred when attempting to prepare/execute SQL.");
-                    System.out.println("Error: " + e.getMessage());
-                }
-            } catch (SQLException e) {
-                System.out.println("SQL Exception occurred when attempting to connect to database.");
-                System.out.println(e.getMessage());
-            }
-        } catch (ClassNotFoundException e) {
-            System.out.println("ClassNotFoundException occurred when trying to load driver: " + e.getMessage());
+        Connection conn = connector.getConnection();
+        if (conn == null) {
+            throw new SQLException("delete(): Could not establish connection to database.");
         }
 
-        return rowsAffected > 0;
+        int deletedRows = 0;
+        try (PreparedStatement ps = conn.prepareStatement("DELETE FROM genres WHERE genreID = ?")) {
+            ps.setInt(1, genreID);
+            deletedRows = ps.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("delete() - The SQL query could not be prepared. Exception: " + e.getMessage());
+            throw e;
+        }
+
+        return deletedRows > 0;
+    }
+
+    /**
+     * Maps a ResultSet row to a Genre object.
+     *
+     * @param rs the ResultSet positioned at a genre row
+     * @return Genre object populated with data from ResultSet
+     * @throws SQLException if error accessing ResultSet data
+     */
+    private static Genre mapGenreRow(ResultSet rs) throws SQLException {
+        return Genre.builder()
+                .genreID(rs.getInt("genreID"))
+                .genreName(rs.getString("genreName"))
+                .description(rs.getString("description"))
+                .build();
     }
 }
