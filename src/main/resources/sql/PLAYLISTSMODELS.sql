@@ -52,19 +52,52 @@ CREATE TABLE playlists
     FOREIGN KEY (userID) REFERENCES users (userID) ON DELETE CASCADE
 );
 
+-- ALBUM TABLE
+DROP TABLE IF EXISTS album;
+CREATE TABLE album
+(
+    album_id INT PRIMARY KEY AUTO_INCREMENT,
+    artist_id INT NOT NULL,
+    album_title VARCHAR(150) NOT NULL,
+    release_year INT,
+    album_art_url VARCHAR(255),
+    total_tracks INT DEFAULT 0,
+
+    CONSTRAINT fk_album_artist
+    FOREIGN KEY (artist_id)
+    REFERENCES Artist(artistId)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- SONGS TABLE
 DROP TABLE IF EXISTS songs;
 CREATE TABLE songs
 (
-    songID   INT(11)      NOT NULL AUTO_INCREMENT,
-    title    VARCHAR(100) NOT NULL,
-    artist   VARCHAR(100) NOT NULL,
-    album    VARCHAR(100) DEFAULT NULL,
-    genreID  INT(11)      DEFAULT NULL,
-    duration INT(11)      DEFAULT NULL,
-    PRIMARY KEY (songID),
-    FOREIGN KEY (genreID) REFERENCES genres (genreID) ON DELETE SET NULL
-);
+   song_id INT PRIMARY KEY AUTO_INCREMENT,
+
+    album_id INT NOT NULL,
+    artist_id INT NOT NULL,
+
+    song_title VARCHAR(150) NOT NULL,
+    duration_seconds INT,
+    track_number INT,
+    release_year INT,
+
+    CONSTRAINT fk_song_album
+    FOREIGN KEY (album_id)
+    REFERENCES Album(album_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+
+    CONSTRAINT fk_song_artist
+    FOREIGN KEY (artist_id)
+    REFERENCES Artist(artistId)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- PLAYLIST_SONGS TABLE
 DROP TABLE IF EXISTS playlist_songs;
@@ -75,5 +108,5 @@ CREATE TABLE playlist_songs
     addedAt    DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (playlistID, songID),
     FOREIGN KEY (playlistID) REFERENCES playlists (playlistID) ON DELETE CASCADE,
-    FOREIGN KEY (songID) REFERENCES songs (songID) ON DELETE CASCADE
+    FOREIGN KEY (songID) REFERENCES songs (song_id) ON DELETE CASCADE
 );
