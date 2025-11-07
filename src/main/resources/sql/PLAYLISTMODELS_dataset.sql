@@ -55,16 +55,33 @@ INSERT INTO playlist_songs (playlistID, songID, addedAt) VALUES
  (10,8,NOW()),(10,9,NOW()),(10,10,NOW()),(10,12,NOW()),(10,19,NOW());
 
 
-INSERT INTO `users` (`username`, `email`, `password`, `userType`)
-VALUES (' juilt ', 'Amena@gmail.com', ' shen', 1),
-       (' Zahidi', 'Zahidi@gmail.com', 'Dior', 1),
-       (' Shoun', 'shoun@gmail.com', 'Dior', 1),
-       ('Zain', 'Zain@gmail.com', 'dummy', 2);
+-- Insert Users (5 users to match the playlists that reference userID 1-5)
+INSERT INTO users (username, email, password, userType) VALUES
+                                                            ('juilt', 'Amena@gmail.com', 'shen', 1),
+                                                            ('Zahidi', 'Zahidi@gmail.com', 'Dior', 1),
+                                                            ('Shoun', 'shoun@gmail.com', 'Dior', 1),
+                                                            ('Zain', 'Zain@gmail.com', 'dummy', 2),
+                                                            ('Maya', 'maya@gmail.com', 'pass123', 1);
 
-
-INSERT INTO `artist` (`artistID`, `artistName`, `genre`, `hometown`, `dateOfBirth`)
-VALUES (1, 'Taylor Swift', 'Pop', 'Nashville Tennessee', '1989-12-13'),
-       (2, 'Drake', 'Rap', 'Toronto Canada', '1986-10-24'),
-       (3, 'Billie Eilish', 'Alternative', 'Los Angeles California', '2001-12-18'),
-       (4, 'The Weeknd', 'R&B', 'Toronto Canada', '1990-02-16'),
-       (5, 'Bad Bunny', 'Reggaeton', 'San Juan Puerto Rico', '1994-03-10');
+-- Insert Artists (20 artists to match the 20 songs implied by playlist_songs)
+INSERT INTO Artist (artistName, genre, hometown, dateOfBirth) VALUES
+                                                                   ('Taylor Swift', 'Pop', 'Nashville Tennessee', '1989-12-13'),
+                                                                   ('Drake', 'Hip Hop', 'Toronto Canada', '1986-10-24'),
+                                                                   ('Billie Eilish', 'Indie', 'Los Angeles California', '2001-12-18'),
+                                                                   ('The Weeknd', 'R&B', 'Toronto Canada', '1990-02-16'),
+                                                                   ('Bad Bunny', 'Latin', 'San Juan Puerto Rico', '1994-03-10'),
+                                                                   ('Adele', 'Pop', 'London England', '1988-05-05'),
+                                                                   ('Kendrick Lamar', 'Hip Hop', 'Compton California', '1987-06-17'),
+                                                                   ('Ed Sheeran', 'Pop', 'Halifax England', '1991-02-17'),
+                                                                   ('Dua Lipa', 'Pop', 'London England', '1995-08-22'),
+                                                                   ('Post Malone', 'Hip Hop', 'Syracuse New York', '1995-07-04'),
+                                                                   ('Ariana Grande', 'Pop', 'Boca Raton Florida', '1993-06-26'),
+                                                                   ('Bruno Mars', 'Pop', 'Honolulu Hawaii', '1985-10-08'),
+                                                                   ('Coldplay', 'Rock', 'London England', '1996-09-01'),
+                                                                   ('Imagine Dragons', 'Rock', 'Las Vegas Nevada', '2008-01-01'),
+                                                                   ('BTS', 'K-Pop', 'Seoul South Korea', '2013-06-13'),
+                                                                   ('Lady Gaga', 'Pop', 'New York New York', '1986-03-28'),
+                                                                   ('Eminem', 'Hip Hop', 'Detroit Michigan', '1972-10-17'),
+                                                                   ('Rihanna', 'R&B', 'Saint Michael Barbados', '1988-02-20'),
+                                                                   ('Justin Bieber', 'Pop', 'London Ontario', '1994-03-01'),
+                                                                   ('Beyoncé', 'R&B', 'Houston Texas', '1981-09-04'); '1994-03-10');
