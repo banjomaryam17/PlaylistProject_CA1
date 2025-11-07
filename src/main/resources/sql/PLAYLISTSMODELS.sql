@@ -7,7 +7,8 @@ DROP TABLE IF EXISTS playlists;
 CREATE TABLE users
 (
     username varchar(55)         NOT NULL,
-    email    varchar(255) UNIQUE NOT NULL,
+    userID INT(11) NOT NULL AUTO_INCREMENT UNIQUE,
+    email    varchar(255) NOT NULL,
     password varchar(255)        NOT NULL,
     userType int(1) NOT NULL DEFAULT 1 COMMENT '1 for user, 2 for admin ',
     PRIMARY KEY (username)

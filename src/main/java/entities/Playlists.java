@@ -1,90 +1,81 @@
 package entities;
+
+import lombok.*;
 import java.util.Date;
 import java.util.Objects;
 
-public class Playlists {
-//    CREATE TABLE playlists (
-//       playlistID INT(11) NOT NULL AUTO_INCREMENT,
-//       userID INT(11) NOT NULL,
-//       playlistName VARCHAR(50) NOT NULL,
-//       description VARCHAR(255) DEFAULT NULL,
-//       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-//       PRIMARY KEY (playlistID)
-//);
+/**
+ * Playlists entity - Using advanced Lombok annotations for precise control.
+ * Maps to the 'playlists' table in the database.
+ *
+ * @author [Your Name]
+ */
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class Playlists implements Comparable<Playlists> {
+
+    @EqualsAndHashCode.Include
     private int playlistID;
+
+    @NonNull
     private int userID;
+
+    @NonNull
     private String playlistName;
+
     private String description;
     private Date createdAt;
+    private boolean isPublic;
 
-    public Playlists(){
+    /**
+     * Custom format method for displaying playlist information.
+     *
+     * @return formatted string representation of the playlist
+     */
+    public String format() {
+        String formattedText = playlistID + ": " + playlistName + " (User ID: " + userID + ")";
+        if (description != null && !description.isEmpty()) {
+            formattedText += "\n\t" + description;
+        }
+        formattedText += "\n\t" + (isPublic ? "Public" : "Private");
+        return formattedText;
     }
 
-    public Playlists(int playlistID, int userID, String playlistName, String description, Date createdAt){
-        this.userID = userID;
-        this.playlistName = playlistName;
-        this.playlistID = playlistID;
-        this.description = description;
-        this.createdAt = createdAt;
+    /**
+     * Deep equals comparison - checks all fields for equality.
+     *
+     * @param p1 first Playlists to compare
+     * @param p2 second Playlists to compare
+     * @return true if all fields are equal, false otherwise
+     */
+    public static boolean deepEquals(Playlists p1, Playlists p2) {
+        return Objects.equals(p1.playlistID, p2.playlistID)
+                && Objects.equals(p1.userID, p2.userID)
+                && Objects.equals(p1.playlistName, p2.playlistName)
+                && Objects.equals(p1.description, p2.description)
+                && Objects.equals(p1.createdAt, p2.createdAt)
+                && Objects.equals(p1.isPublic, p2.isPublic);
     }
-//    GETTERS
-    public int getPlaylistID(){
-        return playlistID;
-    }
-    public int getUserID(){
-        return userID;
-    }
-    public String getPlaylistName(){
-        return playlistName;
-    }
-    public String getDescription(){
-        return description;
-    }
-    public Date getCreatedAt() { return createdAt; }
-    public void setPlaylistID(int playlistID){
-        this.playlistID = playlistID;
-    }
-//    SETTERS
-    public void setUserID(int userID){
-        this.userID= userID;
-    }
-    public void setPlaylistName(String playlistName){
-        this.playlistName = playlistName;
-    }
-    public void setDescription(String description){
-      this.description=description;
-    }
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null) {
-            return false;
-        }
-        if (getClass() != o.getClass()) {
-            return false;
-        }
-        Playlists other = (Playlists) o;
-        return playlistID == other.playlistID &&
-                Objects.equals(playlistName, other.playlistName) &&
-                Objects.equals(description, other.description);
-    }
-    @Override
-    public int hashCode(){
-        return Objects.hash(playlistID,playlistName, description);
 
-    }
+    /**
+     * Compares this Playlists with another Playlists for ordering.
+     * Playlists are ordered by their ID.
+     *
+     * @param p the Playlists to compare to
+     * @return negative if this < p, positive if this > p, 0 if equal
+     */
     @Override
-    public String toString(){
-        return "Playlists{" + "Playlist ID: "+ playlistID +
-                " ,Playlist Name: "+ playlistName +
-                " ,Playlist Description: "+ description +
-                " , User ID: " + userID +
-                " ,Created At: "+ createdAt +
-                "}";
+    public int compareTo(Playlists p) {
+        if (playlistID < p.playlistID) {
+            return -1;
+        } else if (playlistID > p.playlistID) {
+            return 1;
+        }
+        return 0;
     }
 }
