@@ -2,12 +2,13 @@ DROP DATABASE IF EXISTS PLAYLISTMODELS;
 CREATE DATABASE IF NOT EXISTS PLAYLISTMODELS;
 USE PLAYLISTMODELS;
 
+--- user
 DROP TABLE IF EXISTS playlists;
-DROP TABLE IF EXISTS users;
 CREATE TABLE users
 (
     username varchar(55)         NOT NULL,
-    email    varchar(255) UNIQUE NOT NULL,
+    userID INT(11) NOT NULL AUTO_INCREMENT UNIQUE,
+    email    varchar(255) NOT NULL,
     password varchar(255)        NOT NULL,
     userType int(1) NOT NULL DEFAULT 1 COMMENT '1 for user, 2 for admin ',
     PRIMARY KEY (username)
@@ -25,8 +26,8 @@ CREATE TABLE songs (
        PRIMARY KEY (songID)
 );
 
-
-
+---- Artist table
+DROP TABLE IF EXISTS users;
 CREATE TABLE Artist (
 artist_id INT PRIMARY KEY AUTO_INCREMENT,
 artist_name VARCHAR(100) NOT NULL,
@@ -38,7 +39,7 @@ INDEX idx_artist_name (artist_name),
 INDEX idx_country (country)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS artist;
+DROP TABLE IF EXISTS playlists;
 CREATE TABLE artist
 (
     artistID    int(255)    NOT NULL,
@@ -61,13 +62,12 @@ CREATE TABLE genres (
 -- Playlists table (FK removed temporarily)
 DROP TABLE IF EXISTS playlists;
 CREATE TABLE playlists (
-   playlistID INT(11) NOT NULL AUTO_INCREMENT,
-   userID INT(11) NOT NULL,
-   playlistName VARCHAR(50) NOT NULL,
-   description VARCHAR(255) DEFAULT NULL,
-   isPublic BOOLEAN DEFAULT 0,
-   createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-   PRIMARY KEY (playlistID)
+       playlistID INT(11) NOT NULL AUTO_INCREMENT,
+       userID INT(11) NOT NULL,
+       playlistName VARCHAR(50) NOT NULL,
+       description VARCHAR(255) DEFAULT NULL,
+       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+       PRIMARY KEY (playlistID)
 );
 
 -- Playlist_Songs table (FKs removed temporarily)

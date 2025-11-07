@@ -4,6 +4,12 @@ import entities.Playlists;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Data Access Object interface for Playlists entity.
+ * Defines CRUD operations for Playlist management.
+ *
+ *
+ */
 public interface PlaylistsDao {
     public Playlists create(Playlists playlist) throws SQLException;
     public Playlists findById(int playlistID) throws SQLException;

@@ -8,6 +8,7 @@ import java.util.Objects;
  * Playlists entity - Using advanced Lombok annotations for precise control.
  * Maps to the 'playlists' table in the database.
  *
+ * @author [Your Name]
  */
 @Getter
 @Setter
@@ -29,7 +30,7 @@ public class Playlists implements Comparable<Playlists> {
 
     private String description;
     private Date createdAt;
-    private boolean isPublic;  // Added for public/private playlist functionality
+    private boolean isPublic;
 
     /**
      * Custom format method for displaying playlist information.
@@ -37,7 +38,7 @@ public class Playlists implements Comparable<Playlists> {
      * @return formatted string representation of the playlist
      */
     public String format() {
-        String formattedText = playlistID + ": " + playlistName;
+        String formattedText = playlistID + ": " + playlistName + " (User ID: " + userID + ")";
         if (description != null && !description.isEmpty()) {
             formattedText += "\n\t" + description;
         }

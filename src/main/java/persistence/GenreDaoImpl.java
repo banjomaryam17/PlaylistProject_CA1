@@ -56,12 +56,12 @@ public class GenreDaoImpl implements GenreDao{
                     throw new SQLException("Creating genre failed, no ID obtained.");
                 }
             } catch (SQLException e) {
-                System.err.println("create(): An issue occurred when getting generated keys. Exception: " + e.getMessage());
+                log.error("create(): An issue occurred when getting generated keys. Exception: " , e.getMessage());
                 throw e;
             }
 
         } catch (SQLException e) {
-            System.err.println("create() - The SQL query could not be prepared. Exception: " + e.getMessage());
+           log.error("create() - The SQL query could not be prepared. Exception: " , e.getMessage());
             throw e;
         }
 
@@ -84,11 +84,11 @@ public class GenreDaoImpl implements GenreDao{
                     genre = mapGenreRow(rs);
                 }
             } catch (SQLException e) {
-                System.err.println("findById(): An issue occurred when running the query or processing the resultset. Exception: " + e.getMessage());
+              log.error("findById(): An issue occurred when running the query or processing the resultset. Exception: " , e.getMessage());
                 throw e;
             }
         } catch (SQLException e) {
-            System.err.println("findById() - The SQL query could not be prepared. Exception: " + e.getMessage());
+           log.error("findById() - The SQL query could not be prepared. Exception: " , e.getMessage());
             throw e;
         }
 
@@ -111,11 +111,11 @@ public class GenreDaoImpl implements GenreDao{
                     genres.add(genre);
                 }
             } catch (SQLException e) {
-                System.err.println("findAll(): An issue occurred when running the query or processing the resultset. Exception: " + e.getMessage());
+              log.error("findAll(): An issue occurred when running the query or processing the resultset. Exception: " , e.getMessage());
                 throw e;
             }
         } catch (SQLException e) {
-            System.err.println("findAll() - The SQL query could not be prepared. Exception: " + e.getMessage());
+            log.error("findAll() - The SQL query could not be prepared. Exception: ", e.getMessage());
             throw e;
         }
         return genres;
@@ -139,7 +139,7 @@ public class GenreDaoImpl implements GenreDao{
             rowsAffected = ps.executeUpdate();
 
         } catch (SQLException e) {
-            System.err.println("update() - The SQL query could not be prepared. Exception: " + e.getMessage());
+            log.error("update() - The SQL query could not be prepared. Exception: " , e.getMessage());
             throw e;
         }
 
@@ -159,7 +159,7 @@ public class GenreDaoImpl implements GenreDao{
             deletedRows = ps.executeUpdate();
 
         } catch (SQLException e) {
-            System.err.println("delete() - The SQL query could not be prepared. Exception: " + e.getMessage());
+       log.error("delete() - The SQL query could not be prepared. Exception:", e.getMessage());
             throw e;
         }
 
