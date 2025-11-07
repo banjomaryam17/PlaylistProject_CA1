@@ -22,7 +22,7 @@ public class Playlists implements Comparable<Playlists> {
     private int playlistID;
 
     @NonNull
-    private int userID;
+    private String username;
 
     @NonNull
     private String playlistName;
@@ -54,7 +54,7 @@ public class Playlists implements Comparable<Playlists> {
      */
     public static boolean deepEquals(Playlists p1, Playlists p2) {
         return Objects.equals(p1.playlistID, p2.playlistID)
-                && Objects.equals(p1.userID, p2.userID)
+                && Objects.equals(p1.username, p2.username)
                 && Objects.equals(p1.playlistName, p2.playlistName)
                 && Objects.equals(p1.description, p2.description)
                 && Objects.equals(p1.createdAt, p2.createdAt)
