@@ -3,7 +3,6 @@ CREATE DATABASE IF NOT EXISTS PLAYLISTMODELS;
 USE PLAYLISTMODELS;
 
 -- USERS TABLE
--- Fields: username, password, email, userType
 DROP TABLE IF EXISTS users;
 CREATE TABLE users
 (
@@ -18,7 +17,6 @@ CREATE TABLE users
 );
 
 -- GENRES TABLE
--- Fields: genreID, genreName, description
 DROP TABLE IF EXISTS genres;
 CREATE TABLE genres
 (
@@ -28,7 +26,7 @@ CREATE TABLE genres
     PRIMARY KEY (genreID)
 );
 
--- ARTIST TABLE (matches Artist.java)
+-- ARTIST TABLE
 DROP TABLE IF EXISTS artist;
 CREATE TABLE artist
 (

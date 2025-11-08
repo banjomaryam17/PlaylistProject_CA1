@@ -19,7 +19,7 @@ import  java.util.List;
  */
 @Slf4j
 public class GenreDaoImpl implements GenreDao{
-    private Connector connector;
+    private  Connector connector;
 
     public GenreDaoImpl(Connector connector) {
         this.connector = connector;
