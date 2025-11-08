@@ -42,7 +42,7 @@ public class MySqlConnector implements Connector {
         String database = properties.getProperty("database", "PLAYLISTS");
         //String username = "root";
         String username = properties.getProperty("username", "root");
-        //String password = "";
+        //String password = "root";
         String password = properties.getProperty("password");
 
         try {
