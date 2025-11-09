@@ -15,10 +15,10 @@ import java.util.List;
  * @author [Your Name]
  */
 @Slf4j
-public class PlaylistsService {
+public class PlaylistService {
     private PlaylistsDao playlistsDao;
 
-    public PlaylistsService(PlaylistsDao dao) {
+    public PlaylistService(PlaylistsDao dao) {
         this.playlistsDao = dao;
     }
 

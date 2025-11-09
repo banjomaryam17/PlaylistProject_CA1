@@ -12,6 +12,7 @@ import java.util.List;
  *
  */
 public interface PlaylistsDao {
+    public void closeConnection();
     public Playlists create(Playlists playlist) throws SQLException;
     public Playlists findById(int playlistID) throws SQLException;
     public List<Playlists> findAll() throws SQLException;
@@ -21,6 +22,7 @@ public interface PlaylistsDao {
     public boolean delete(int playlistID) throws SQLException;
     public boolean addSong(int playlistID, int songID) throws SQLException;
     public boolean removeSong(int playlistID, int songID) throws SQLException;
+
 
 
 }
