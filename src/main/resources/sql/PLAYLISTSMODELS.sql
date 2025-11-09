@@ -156,3 +156,49 @@ CREATE TABLE rating
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
+-- ALBUM TABLE
+DROP TABLE IF EXISTS album;
+CREATE TABLE album
+(
+    album_id INT PRIMARY KEY AUTO_INCREMENT,
+    artist_id INT NOT NULL,
+    album_title VARCHAR(150) NOT NULL,
+    release_year INT,
+    album_art_url VARCHAR(255),
+    total_tracks INT DEFAULT 0,
+
+    CONSTRAINT fk_album_artist
+        FOREIGN KEY (artist_id)
+            REFERENCES Artist(artist_id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- SONGS TABLE
+DROP TABLE IF EXISTS songs;
+CREATE TABLE songs
+(
+    song_id INT PRIMARY KEY AUTO_INCREMENT,
+
+    album_id INT NOT NULL,
+    artist_id INT NOT NULL,
+
+    song_title VARCHAR(150) NOT NULL,
+    duration_seconds INT,
+    track_number INT,
+    release_year INT,
+
+    CONSTRAINT fk_song_album
+        FOREIGN KEY (album_id)
+            REFERENCES Album(album_id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE,
+
+    CONSTRAINT fk_song_artist
+        FOREIGN KEY (artist_id)
+            REFERENCES Artist(artist_id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
+
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

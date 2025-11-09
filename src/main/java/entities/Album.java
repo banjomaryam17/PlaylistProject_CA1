@@ -28,12 +28,12 @@ import lombok.NoArgsConstructor;
 
 public class Album {
 
-   private int albumId;
-   private int artistId;
-   private String albumTitle;
-   private int releaseYear;
-   private String albumArtUrl;
-   private int totalTracks;
+    private int albumId;
+    private int artistId;
+    private String albumTitle;
+    private int releaseYear;
+    private String albumArtUrl;
+    private int totalTracks;
 
     /**
      * Constructor without album ID (for inserting new albums)
